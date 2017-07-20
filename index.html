@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PLANTS VS VEGGIES</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+        <script src='lib/quintus.js'></script>
+        <script src='lib/quintus_sprites.js'></script>
+        <script src='lib/quintus_scenes.js'></script>
+        <script src='lib/quintus_input.js'></script>
+        <script src='lib/quintus_anim.js'></script>
+        <script src='lib/quintus_2d.js'></script>
+        <script src='lib/quintus_touch.js'></script>
+        <script src='lib/quintus_ui.js'></script>   
+        <script src='lib/quintus_audio.js'></script>  
+        <script src='scripts/zombies-enemies.js'></script>
+        <script src='scripts/zombies-gui.js'></script>
+        <script src='scripts/zombies-plants.js'></script>
+        <script src='scripts/zombies-gameplay.js'></script>
+    </head>
+    <body style="background-color: black;margin:0px;border:0px;">
+        <script>
+        window.addEventListener("load",function() {
+
+          var Q = window.Q = Quintus({development: true})
+            .include('Sprites, Scenes, 2D, UI, Input, Touch, Audio')
+            .include('ZombiesEnemies, ZombiesGUI, ZombiesPlants, ZombiesGameplay')
+            .setup({
+                width: 1080,
+                height: 720,
+                scaleToFit: true
+            });
+
+          //enable sound  , this will find the best way to play audio according to the device 
+          Q.enableSound();
+
+          //turn off gravity
+          Q.gravityY = 0;
+          Q.gravityX = 0;
+
+          //constants
+          Q.SPRITE_SUN = 2;
+          Q.SPRITE_ZOMBIE = 4;
+          Q.SPRITE_PLANT = 8;
+          Q.SPRITE_BULLET = 16;
+          Q.SPRITE_GROUND = 32;
+          Q.SPRITE_UI = 64;
+
+          //enable touch
+          Q.touch(Q.SPRITE_UI | Q.SPRITE_SUN | Q.SPRITE_GROUND);    
+
+          Q.scene('level', function(stage) {
+            var level = new Q.Level({levelData: stage.options['levelData']});               
+            stage.insert(level);
+           
+            //insert side panel
+            var sidePanel = new Q.SidePanel({
+              plantTypes: stage.options['levelData']['availablePlants']
+            });
+            stage.insert(sidePanel);
+          });
+      
+          //load assets
+          Q.load('background.png, sun.png, zombie1.png, zombie2.png, chicken.png, zombie3.png, carnivorousplant.png, corn.png, chilli.png, sunflower.png, bullet.png, level1.json, level2.json, boom.mp3, collect.mp3, hit.mp3', function() {
+              Q.state.reset({sun: 200, currentPlant: null});
+              Q.stageScene('level', {levelData: Q.assets['level1.json']});  
+              Q.stageScene("sun",1);                
+          });
+        });
+        </script>
+    </body>
+</html>
